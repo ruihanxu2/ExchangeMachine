@@ -1,0 +1,25 @@
+version: '2'
+
+services:
+  db:
+    image: postgres
+    environment:
+      POSTGRES_PASSWORD: passw0rd
+      POSTGRES_USER: postgres
+      POSTGRES_DB: EXCHANGEMACHINE
+    volumes:
+      - /var/lib/docker/volumes/data-volume:/var/lib/postgresql/data
+    restart: always
+  matching_server:
+    build: ./matching_engine
+    user: nobody
+    command: bash -c "python3 server.py"
+    volumes:
+      - ./matching_engine:/src
+    ports:
+      - "12345:12345"
+    expose:
+      - "12345"
+    depends_on:
+      - db
+
